@@ -9,6 +9,8 @@ import SwiftUI
 
 struct Settings: View {
     @AppStorage("quizURL") private var jsonURL: String = "http://tednewardsandbox.site44.com/questions.json"
+    @AppStorage("refreshInterval") private var refreshInterval: Int = 60
+
     @State private var showUrlAlert = false
     @State private var showNetworkErrorAlert = false
     @Binding var categories: [Category]
@@ -31,6 +33,15 @@ struct Settings: View {
             .cornerRadius(10)
             .alert("Invalid URL", isPresented: $showUrlAlert) {
                 Button("OK", role: .cancel) { }
+            }
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Auto-refresh interval: \(refreshInterval) seconds")
+                    .font(.subheadline)
+
+                Stepper("Set refresh interval", value: $refreshInterval, in: 10...600, step: 10)
             }
 
         }
