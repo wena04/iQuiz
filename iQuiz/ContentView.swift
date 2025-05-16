@@ -55,7 +55,7 @@ struct ContentView: View {
     ]
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List(
                 categories.isEmpty ? defaultCategories : categories,
                 id: \.self

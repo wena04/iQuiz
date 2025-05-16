@@ -2,7 +2,7 @@
 //  QuizScreen.swift
 //  iQuiz
 //
-//  Created by Anthony  Wen on 5/14/25.
+//  Created by Anthony Wen on 5/14/25.
 //
 
 import SwiftUI
@@ -13,7 +13,9 @@ struct QuizScreen: View {
     let currentQuestionIndex: Int
     let correctAnswers: Int
     @State private var selectedAnswerIndex: Int = -1
-    
+    @State private var showAnswer = false
+    @Environment(\.dismiss) private var dismiss
+
     init(category: Category, currentQuestionIndex: Int, correctAnswers: Int) {
         self.category = category
         self.currentQuestionIndex = currentQuestionIndex
@@ -21,7 +23,7 @@ struct QuizScreen: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 20) {
                 Text(category.questions[currentQuestionIndex].text)
                     .font(.title)
@@ -41,25 +43,45 @@ struct QuizScreen: View {
                     .padding(.horizontal, 40)
                 }
                 
-                NavigationLink(
-                    destination:
-                        AnswerCheckScreen(
-                            question: category.questions[currentQuestionIndex],
-                            selectedAnswerIndex: selectedAnswerIndex,
-                            currentQuestionIndex: currentQuestionIndex,
-                            category: category,
-                            correctAnswers: correctAnswers
-                        )) {
-                            Text("Submit")
-                        }
-                        .disabled(selectedAnswerIndex == -1)
+                Button("Submit") {
+                    if selectedAnswerIndex != -1 {
+                        showAnswer = true
+                    }
+                }
+                .disabled(selectedAnswerIndex == -1)
+
+                Text("💡 Tip: Swipe right to submit, left to quit.")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .padding(.top, 10)
             }
             .padding()
+            .background(Color.green.opacity(0.2)) // light green background
+            .border(Color.blue, width: 1) // add border to swipe zone
+            .highPriorityGesture(
+                DragGesture().onEnded { value in
+                    print("Swipe detected: \(value.translation.width)")
+                    if value.translation.width > 50 && selectedAnswerIndex != -1 {
+                        print("➡️ Swipe Right Detected")
+                        showAnswer = true
+                    } else if value.translation.width < -50 {
+                        print("⬅️ Swipe Left Detected")
+                        dismiss()
+                    }
+                }
+            )
+            .navigationDestination(isPresented: $showAnswer) {
+                AnswerCheckScreen(
+                    question: category.questions[currentQuestionIndex],
+                    selectedAnswerIndex: selectedAnswerIndex,
+                    currentQuestionIndex: currentQuestionIndex,
+                    category: category,
+                    correctAnswers: correctAnswers
+                )
+            }
             .navigationBarTitle("Question \(currentQuestionIndex + 1)")
-            
         }
         .navigationBarBackButtonHidden(true)
-        
     }
 }
 
