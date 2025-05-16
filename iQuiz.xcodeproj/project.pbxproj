@@ -18,6 +18,7 @@
 		DBFC30F62BF2B835004F9A86 /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFC30F52BF2B835004F9A86 /* Question.swift */; };
 		DBFC30FB2BF2D646004F9A86 /* AnswerCheckScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFC30FA2BF2D646004F9A86 /* AnswerCheckScreen.swift */; };
 		DBFC30FF2BF2D67F004F9A86 /* QuizSummaryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFC30FE2BF2D67F004F9A86 /* QuizSummaryScreen.swift */; };
+		E0715A7E2DD70C72008AE98A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E0715A7D2DD70C72008AE98A /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		DBFC30F92BF2C57F004F9A86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DBFC30FA2BF2D646004F9A86 /* AnswerCheckScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswerCheckScreen.swift; sourceTree = "<group>"; };
 		DBFC30FE2BF2D67F004F9A86 /* QuizSummaryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizSummaryScreen.swift; sourceTree = "<group>"; };
+		E0715A7D2DD70C72008AE98A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				DBC78BDE2BEDB94300FC235B /* Structs */,
 				DBC78BCA2BEB530E00FC235B /* iQuizApp.swift */,
 				DBC78BCC2BEB530E00FC235B /* ContentView.swift */,
+				E0715A7D2DD70C72008AE98A /* Settings.bundle */,
 				DBC78BCE2BEB531100FC235B /* Assets.xcassets */,
 				DBC78BD02BEB531100FC235B /* Preview Content */,
 				DBC78BD82BEDAD2B00FC235B /* LaunchScreen.storyboard */,
@@ -156,6 +159,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0715A7E2DD70C72008AE98A /* Settings.bundle in Resources */,
 				DBC78BD92BEDAD2B00FC235B /* LaunchScreen.storyboard in Resources */,
 				DBC78BD22BEB531100FC235B /* Preview Assets.xcassets in Resources */,
 				DBC78BCF2BEB531100FC235B /* Assets.xcassets in Resources */,

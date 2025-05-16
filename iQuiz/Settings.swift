@@ -1,38 +1,47 @@
-//
-//  Settings.swift
-//  iQuiz
-//
-//  Created by Anthony Wen on 5/14/25.
-//
-
 import SwiftUI
 
 struct Settings: View {
-    @AppStorage("quizURL") private var jsonURL: String = "http://tednewardsandbox.site44.com/questions.json"
+    @AppStorage("quizURL") private var storedURL: String = "http://tednewardsandbox.site44.com/questions.json"
     @AppStorage("refreshInterval") private var refreshInterval: Int = 60
 
+    @Binding var categories: [Category]
+
+    @State private var urlText: String = ""
     @State private var showUrlAlert = false
     @State private var showNetworkErrorAlert = false
-    @Binding var categories: [Category]
+    @State private var loadStatus: String? = nil
 
     var body: some View {
         VStack(spacing: 30) {
             Text("Enter URL to quiz data")
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            TextField("Enter URL here", text: $jsonURL)
+            TextField("Enter URL here", text: $urlText)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .onAppear {
+                    urlText = storedURL
+                }
 
             Button("Check Now") {
-                downloadData()
+                guard !urlText.isEmpty else {
+                    showUrlAlert = true
+                    return
+                }
+                storedURL = urlText
+                downloadData(from: storedURL)
             }
             .frame(maxWidth: .infinity)
             .padding()
             .foregroundColor(.white)
             .background(Color.blue)
             .cornerRadius(10)
-            .alert("Invalid URL", isPresented: $showUrlAlert) {
-                Button("OK", role: .cancel) { }
+
+            // ✅ Status Message
+            if let status = loadStatus {
+                Text(status)
+                    .font(.caption)
+                    .foregroundColor(.blue)
+                    .transition(.opacity)
             }
 
             Divider()
@@ -43,10 +52,12 @@ struct Settings: View {
 
                 Stepper("Set refresh interval", value: $refreshInterval, in: 10...600, step: 10)
             }
-
         }
         .padding(40)
         .navigationTitle("Settings")
+        .alert("Invalid URL", isPresented: $showUrlAlert) {
+            Button("OK", role: .cancel) { }
+        }
         .alert("Network Error", isPresented: $showNetworkErrorAlert) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -54,21 +65,18 @@ struct Settings: View {
         }
     }
 
-    private func downloadData() {
-        guard let url = URL(string: jsonURL) else {
+    private func downloadData(from urlString: String) {
+        guard let url = URL(string: urlString) else {
             showUrlAlert = true
             return
         }
 
-        print("🔄 Fetching data from: \(url)")
-
-        let session = URLSession.shared
-        let task = session.dataTask(with: url) { data, response, error in
-
+        URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {
-                print("❌ Error: \(error.localizedDescription)")
+                print("❌ Error: \(error)")
                 DispatchQueue.main.async {
-                    self.showNetworkErrorAlert = true
+                    showNetworkErrorAlert = true
+                    loadStatus = "❌ Failed to load from network"
                 }
                 return
             }
@@ -79,19 +87,17 @@ struct Settings: View {
             }
 
             do {
-                let decoder = JSONDecoder()
-                let downloadedCategories = try decoder.decode([Category].self, from: data)
-                print("✅ Successfully read \(downloadedCategories.count) categories")
-
+                let decoded = try JSONDecoder().decode([Category].self, from: data)
                 DispatchQueue.main.async {
-                    self.categories = downloadedCategories
+                    categories = decoded
+                    loadStatus = "✅ Loaded from network"
                 }
-
             } catch {
-                print("❌ Error decoding JSON: \(error.localizedDescription)")
+                print("❌ JSON decode failed: \(error)")
+                DispatchQueue.main.async {
+                    loadStatus = "❌ Failed to decode data"
+                }
             }
-        }
-
-        task.resume()
+        }.resume()
     }
 }
